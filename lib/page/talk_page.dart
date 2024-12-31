@@ -4,6 +4,8 @@ import 'package:groq_sdk/groq_sdk.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import "package:gpt_markdown/gpt_markdown.dart";
+import 'package:url_launcher/url_launcher.dart';
 
 class TalkPage extends HookWidget {
   const TalkPage({super.key});
@@ -81,8 +83,19 @@ class TalkPage extends HookWidget {
                                             ListTile(
                                               title: Text(chatHistory
                                                   .value[index]["name"]),
-                                              subtitle: Text(chatHistory
-                                                  .value[index]["message"]),
+                                              subtitle: GptMarkdown(
+                                                  chatHistory.value[index]
+                                                      ["message"],
+                                                  onLinkTab:
+                                                      (url, title) async {
+                                                // print(url);
+                                                // print(title);
+                                                if (!await launchUrl(
+                                                    Uri.parse(url))) {
+                                                  throw Exception(
+                                                      'Could not launch ${Uri.parse(url)}');
+                                                }
+                                              }),
                                             ),
                                           ],
                                         ),

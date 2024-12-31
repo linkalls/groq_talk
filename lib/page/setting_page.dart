@@ -8,7 +8,7 @@ class SettingPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _controller = useState<TextEditingController?>(null);
+    final controller = useState<TextEditingController?>(null);
 
     useEffect(
       () {
@@ -19,7 +19,7 @@ class SettingPage extends HookWidget {
         }
 
         getApiKey().then((value) {
-          _controller.value = TextEditingController(text: value);
+          controller.value = TextEditingController(text: value);
         });
         return null;
       },
@@ -46,7 +46,7 @@ class SettingPage extends HookWidget {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextField(
-                  controller: _controller.value,
+                  controller: controller.value,
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.save),
@@ -54,8 +54,8 @@ class SettingPage extends HookWidget {
                         final SharedPreferences preferences =
                             await SharedPreferences.getInstance();
                         await preferences.setString(
-                            "api_key", _controller.value!.text);
-                        _controller.value!.clear();
+                            "api_key", controller.value!.text);
+                        controller.value!.clear();
                       },
                     ),
                     hintText: "API KEYを入力してください",
