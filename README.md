@@ -1,16 +1,13 @@
 # groq_talk
 
-A new Flutter project.
+## API 設定
 
-## Getting Started
+このアプリケーションを使用するには、API キーを設定する必要があります。以下の手順に従って設定してください。
 
-This project is a starting point for a Flutter application.
+1. 試してみたい場合、ブラウザで [linkall.cloudfree.jp](https://linkall.cloudfree.jp/) にアクセスします。
+2. アカウントを作成し、ログインします。
+3. API キーを取得します。
+4. アプリケーションを起動し、設定画面に移動します。
+5. 取得した API キーを入力し、保存します。
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+これで、アプリケーションが使用可能になります。
