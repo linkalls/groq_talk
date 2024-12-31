@@ -21,6 +21,7 @@ class SettingPage extends HookWidget {
         getApiKey().then((value) {
           _controller.value = TextEditingController(text: value);
         });
+        return null;
       },
       const [],
     );
