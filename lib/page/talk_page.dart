@@ -30,7 +30,7 @@ class TalkPage extends HookWidget {
     final groq = useState<Groq?>(null);
     final chat = useState<GroqChat?>(null);
     final canUseBool = useState(false);
-    final _messages = useState<List<types.Message>>([]);
+    // final _messages = useState<List<types.Message>>([]);
     final _user = const types.User(
         id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
         firstName: "poteto",
