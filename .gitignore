@@ -45,3 +45,4 @@ app.*.map.json
 /android/app/release
 .env
 lib/gen/env.g.dart
+lib/72078864.jpg

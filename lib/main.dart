@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:groq_talk/page/talk_page.dart';
 // import "package:flutter_hooks/flutter_hooks.dart";
 // import "package:groq_sdk/groq_sdk.dart";
 // import 'package:gpt_markdown/gpt_markdown.dart';
 // import "package:groq_talk/gen/env.g.dart";
 import "package:groq_talk/router/router.dart";
+import 'package:get/get.dart';
 
 void main() {
+  Get.put(ChatController()); //*ここでやると全部のページで使える
   runApp(const MyApp());
 }
 

@@ -4,13 +4,14 @@ import 'package:groq_sdk/groq_sdk.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import "package:gpt_markdown/gpt_markdown.dart";
-import 'package:url_launcher/url_launcher.dart';
-import 'package:universal_platform/universal_platform.dart';
+// import "package:gpt_markdown/gpt_markdown.dart";
+// import 'package:url_launcher/url_launcher.dart';
+// import 'package:universal_platform/universal_platform.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'dart:convert';
+// import 'dart:convert';
 import 'dart:math';
+import 'package:get/get.dart';
 
 class TalkPage extends HookWidget {
   const TalkPage({super.key});
@@ -23,7 +24,9 @@ class TalkPage extends HookWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     final groq = useState<Groq?>(null);
     final chat = useState<GroqChat?>(null);
     final canUseBool = useState(false);
@@ -32,17 +35,17 @@ class TalkPage extends HookWidget {
         id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
         firstName: "poteto",
         lastName: "town",
-        imageUrl:
-            "https://pbs.twimg.com/profile_images/1722561394103685120/lEyNiiLu_400x400.jpg");
-    final chatHistory = useState([]);
-    final controller = TextEditingController();
+        imageUrl: "https://avatars.githubusercontent.com/u/72078864?s=400&v=4");
+    // final chatHistory = useState([]);
+    // final controller = TextEditingController();
     final isFinished = useState(false);
 
+    final chatController = Get.find<ChatController>();
+
     final _other = const types.User(
-        id: 'otheruser',
+        id: 'otherUser',
         firstName: "AI",
-        imageUrl:
-            "https://pbs.twimg.com/profile_images/1722561394103685120/lEyNiiLu_400x400.jpg");
+        imageUrl: "https://avatars.githubusercontent.com/u/72078864?s=400&v=4");
 
     useEffect(() {
       Future<String?> getApiKey() async {
@@ -95,54 +98,53 @@ class TalkPage extends HookWidget {
                       child: Column(
                         children: [
                           Expanded(
-                            child: Chat(
-                              l10n: const ChatL10nJa(),
-                              theme: const DefaultChatTheme(
-                                inputBackgroundColor: Colors.deepPurple,
-                                backgroundColor: Colors.black,
-                              ),
-                              showUserAvatars: true,
-                              showUserNames: true,
-                              messages: _messages.value,
-                              onSendPressed: (types.PartialText message) async {
-                                print("send pressed");
-                                print(message.text);
-                                final textMessage = types.TextMessage(
-                                  author: _user,
-                                  createdAt:
-                                      DateTime.now().millisecondsSinceEpoch,
-                                  id: randomString(),
-                                  text: message.text,
-                                );
-                                _messages.value = [
-                                  textMessage,
-                                  ..._messages.value
-                                ];
-                                final thinkingMessage = types.TextMessage(
-                                  author: _other,
-                                  createdAt:
-                                      DateTime.now().millisecondsSinceEpoch,
-                                  id: randomString(),
-                                  text: "AIが考え中です...",
-                                );
-                                _messages.value = [
-                                  thinkingMessage,
-                                  ..._messages.value
-                                ];
-                                final (response, usage) =
-                                    await chat.value!.sendMessage(message.text);
-                                final aiMessage = types.TextMessage(
+                            child: Obx(
+                              () => Chat(
+                                l10n: const ChatL10nJa(),
+                                theme: const DefaultChatTheme(
+                                  inputBackgroundColor: Colors.deepPurple,
+                                  backgroundColor: Colors.black,
+                                ),
+                                showUserAvatars: true,
+                                showUserNames: true,
+                                messages: chatController.chatList.value,
+                                onSendPressed:
+                                    (types.PartialText message) async {
+                                  print("send pressed");
+                                  print(message.text);
+                                  final textMessage = types.TextMessage(
+                                    author: _user,
+                                    createdAt:
+                                        DateTime.now().millisecondsSinceEpoch,
+                                    id: randomString(),
+                                    text: message.text,
+                                    status: types.Status.sent,
+                                  );
+                                  chatController.add(textMessage);
+                                  final thinkingMessage = types.TextMessage(
+                                    author: _other,
+                                    createdAt:
+                                        DateTime.now().millisecondsSinceEpoch,
+                                    id: randomString(),
+                                    text: "AIが考え中です...",
+                                    status: types.Status.delivered,
+                                  );
+                                  chatController.add(thinkingMessage);
+                                  final (response, usage) = await chat.value!
+                                      .sendMessage(message.text);
+                                  final aiMessage = types.TextMessage(
                                     author: _other,
                                     id: randomString(),
-                                    text: response.choices.first.message);
-                                _messages.value.removeAt(0);
-                                _messages.value = [
-                                  aiMessage,
-                                  ..._messages.value
-                                ];
-                                // response.choices.first.message;
-                              },
-                              user: _user,
+                                    text: response.choices.first.message,
+                                    showStatus: true,
+                                    createdAt:
+                                        DateTime.now().millisecondsSinceEpoch,
+                                  );
+                                  chatController.remove(thinkingMessage);
+                                  chatController.add(aiMessage);
+                                },
+                                user: _user,
+                              ),
                             ),
                           ),
                           // Expanded(
@@ -279,4 +281,16 @@ class ChatL10nJa extends ChatL10n {
     super.sendButtonAccessibilityLabel = '送信',
     super.unreadMessagesLabel = '未読メッセージ',
   });
+}
+
+class ChatController extends GetxController {
+  final chatList = Rx<List<types.Message>>([]);
+  void add(types.Message value) {
+    chatList.value = [value, ...chatList.value];
+  }
+
+  void remove(types.Message value) {
+    chatList.value.remove(value);
+    chatList.refresh();
+  }
 }
